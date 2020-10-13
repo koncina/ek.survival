@@ -49,11 +49,6 @@ augment.kaplan_scan <- function(x) {
   mutate(x[["data"]], expression_level = x[["expression_level"]])
 }
 
-#' @importFrom stats median
-get_median_time <- function(x, time, stratus) {
-  median(time[x == stratus], na.rm = TRUE)
-}
-
 #' Stratify participants using the KaplanScan algorithm.
 #'
 #' Use the KaplanScan algorithm from the \href{http://r2.amc.nl/}{R2 Genomics Analysis and Visualisation Platform}
@@ -97,9 +92,6 @@ kaplan_scan <- function(data, time, event, expression, p.adjust.method = "bonfer
 
   ks_models <- map(expression_level, ks_coxph, time = ks_data[["time"]], event = ks_data[["event"]])
 
-  median_time_high <- map_dbl(expression_level, get_median_time, time = ks_data[["time"]], stratus = "high")
-  median_time_low <- map_dbl(expression_level, get_median_time, time = ks_data[["time"]], stratus = "low")
-
   p_values <- map(ks_models, broom::tidy, exponentiate = TRUE)
   hr_values <- map_dbl(p_values, "estimate")
   p_values <- map_dbl(p_values, "p.value")
@@ -114,8 +106,6 @@ kaplan_scan <- function(data, time, event, expression, p.adjust.method = "bonfer
          data = select(data, !!!unname(ks_vars)),
          model = ks_models[[cutoff_rank]],
          expression_level = expression_level[[cutoff_rank]][order(ks_data[["row"]])],
-         median_time = list(high = median_time_high,
-                            low = median_time_low),
          p_values = p_values,
          hr_values = hr_values,
          cutoff_rank = unname(cutoff_rank + 7)), class = "kaplan_scan")
