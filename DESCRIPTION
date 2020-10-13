@@ -7,4 +7,17 @@ Description: Helper functions used to analyse survival data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Imports: assertr,
+  broom,
+  cli,
+  crayon,
+  dplyr,
+  ggkm,
+  ggplot2,
+  purrr,
+  rlang,
+  survival,
+  tidyr,
+  tibble,
+  tidyselect
 RoxygenNote: 7.1.1
