@@ -1,0 +1,49 @@
+---
+title: "Dichotomize expression"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Dichotomize expression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE}
+library(ek.survival)
+library(tidyverse)
+```
+
+```{r}
+set.seed(1)
+sample_data <- mutate(survival::aml, expr = rnorm(23))
+sample_data
+```
+
+
+
+```{r}
+ks_obj <- kaplan_scan(sample_data, time, status, expr)
+ks_obj
+```
+```{r}
+sample_data %>% 
+  pull(expr) %>% 
+  sort() %>% 
+  `[`(ks_obj[["cutoff_rank"]])
+```
+
+```{r}
+with(sample_data, best_threshold(time, status, expr))
+```
+
+```{r}
+sample_data %>% 
+  mutate(expression_level = if_else(expr <= best_threshold(time, status, expr), "low", "high"))
+```
+

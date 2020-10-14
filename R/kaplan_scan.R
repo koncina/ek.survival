@@ -110,3 +110,18 @@ kaplan_scan <- function(data, time, event, expression, p.adjust.method = "bonfer
          hr_values = hr_values,
          cutoff_rank = unname(cutoff_rank + 7)), class = "kaplan_scan")
 }
+
+#' Extract the threshold expression value able to achieve the biggest survival curve separation upon dichotomization.
+#'
+#' Uses the KaplanScan algorithm to determine the threshold.
+#'
+#' @param time,event,expression Numerical vectors containing the follow up time, status indicator and gene expression.
+#'
+#' @export
+best_threshold <- function(time, event, expression) {
+  x <- data.frame(time = time,
+                  event = event,
+                  expression = expression)
+  ks <- kaplan_scan(x, time, event, expression)
+  sort(expression)[ks[["cutoff_rank"]]]
+}
