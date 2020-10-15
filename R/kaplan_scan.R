@@ -16,16 +16,17 @@ ks_coxph <- function(time, event, expression) {
   coxph(formula = Surv(time = time, event = event) ~ expression)
 }
 
-#' @import crayon
+#' @importFrom crayon make_style finish
 #' @importFrom cli cat_line
 #' @importFrom stats start
 #' @export
 print.kaplan_scan <- function(x, ...) {
+  `%+%` <- crayon::`%+%`
   darkgey <- make_style("darkgrey")
   orange <- make_style("orange")
   percent_low <- round(100 * x[["cutoff_rank"]] / nrow(x[["data"]]), 2)
   percent_high <- 100 - percent_low
-  cat_line("Best cutoff is: " %+% orange(percent_low)  %+% orange("% low") %+% " and " %+% orange(percent_high)  %+% orange("% high"))
+  cat_line("Best cutoff is: " %+% orange(percent_low) %+% orange("% low") %+% " and " %+% orange(percent_high)  %+% orange("% high"))
   cat_line(paste0(x[["p_value_adj_method"]], " adjusted p-value: ", round(x[["p_value_adj"]], 3), " (unadjusted: ", round(x[["p_value"]], 3), ")"))
   cat(start(darkgey))
   cat_line("Model:")
