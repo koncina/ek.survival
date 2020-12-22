@@ -30,14 +30,18 @@ tidy_coxph.data.frame <- function(data, time, event, predictor, exponentiate = T
               pull(data, {{event}}))
   x <- rename(data, .predictor = {{predictor}})
 
+
+
   n_stratus <- length(unique(pull(x, .predictor)))
-  if (n_stratus > 2) {
-    stop("The function does not handle more than 2 predictor levels yet", call. = FALSE)
+
+  if (n_stratus <= 2) {
+    n_by_stratus <- count(x, .predictor)
+    n_by_stratus <- pivot_wider(n_by_stratus, names_from = .predictor,
+                                values_from = n, names_prefix = "n_")
+  } else {
+    n_by_stratus <- NULL
   }
 
-  n_by_stratus <- count(x, .predictor)
-  n_by_stratus <- pivot_wider(n_by_stratus, names_from = .predictor,
-                              values_from = n, names_prefix = "n_")
   coxph_fit <- with(x, coxph(surv ~ .predictor))
 
   x <- tidy(coxph_fit, exponentiate = {{exponentiate}}, conf.int = TRUE)
