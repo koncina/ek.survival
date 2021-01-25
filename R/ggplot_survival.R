@@ -30,7 +30,7 @@ ggplot_survival <- function(data, time, event, predictor = NULL, hr = TRUE, coun
   if (!is_empty(groups(data))) p <- p + facet_wrap(groups(data))
 
   if (isTRUE(hr) && n_levels == 2) {
-    get_stats <- miscrek::tidy_coxph(data, time = {{time}}, event = {{event}}, predictor = {{predictor}}) %>%
+    get_stats <- tidy_coxph(data, time = {{time}}, event = {{event}}, predictor = {{predictor}}) %>%
       mutate(across(c(p_val), round_nsmall, 3),
              across(starts_with("hr"), round_nsmall, 2))
     p <- p +
