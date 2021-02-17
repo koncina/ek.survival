@@ -45,10 +45,9 @@ tidy_coxph.data.frame <- function(data, time, event, predictor, exponentiate = T
   coxph_fit <- with(x, coxph(surv ~ .predictor))
 
   x <- tidy(coxph_fit, exponentiate = {{exponentiate}}, conf.int = TRUE)
-  x <- mutate(x,
-              coxph = list(coxph_fit),
-              across(term, str_replace,
-                     ".predictor", paste0(quo_name(enquo(predictor)), "_")))
+  x <- mutate(x, coxph = list(coxph_fit))
+  x <- mutate(x, across(term, str_replace,
+                        ".predictor", paste0(quo_name(enquo(predictor)), "_")))
   x <- bind_cols(x, n_by_stratus)
 
   if (isTRUE(cox_zph)) {
